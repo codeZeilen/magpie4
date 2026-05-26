@@ -106,7 +106,7 @@ BII <- function(gdx, file = NULL, level = "glo", mode = "auto", landClass = "sum
   # ----------------------------------
 
   # spatial aggregation weight
-  if (is.null(spatialWeight)){
+  if (is.null(spatialWeight)) {
     agg_weight <- land(gdx, level = "grid", sum = TRUE)
   } else {
     agg_weight <- spatialWeight
@@ -141,7 +141,7 @@ BII <- function(gdx, file = NULL, level = "glo", mode = "auto", landClass = "sum
     # calculate average BII values for different land classes
     # read in land areas for different land cover classes
     land <- land(gdx, level = "cell", types = NULL, subcategories = NULL, sum = FALSE)
-    forestArea <- ov35_secdforest <- readGDX(gdx, "ov35_secdforest", select = list(type = "level"))
+    forestArea <- readGDX(gdx, "ov35_secdforest", select = list(type = "level"))
     secdYoung <- setNames(dimSums(forestArea[, , paste0("ac", seq(from = 0, to = 30, by = 5))], dim = 3), nm = "secd_young")
     secdMature <- setNames(dimSums(forestArea[, , paste0("ac", seq(from = 0, to = 30, by = 5)), invert = TRUE], dim = 3), nm = "secd_mature")
     forestArea <- mbind(secdYoung, secdMature)
@@ -159,23 +159,25 @@ BII <- function(gdx, file = NULL, level = "glo", mode = "auto", landClass = "sum
     pasture <- side_layers[, , c("manpast", "rangeland")] * collapseNames(land[, , "past"])
 
     # calculate average BIIs per land class
-    avgForestryBII <- add_dimension(ifelse((collapseDim(land[, , "forestry"]) * side_layers[, , c("forested", "nonforested")]) > 0,
-      dimSums(ov_bv[, , c("aff_co2p", "aff_ndc", "plant")], dim = "landcover44") /
-        (collapseDim(land[, , "forestry"]) * side_layers[, , c("forested", "nonforested")]),
-      0
-    ),
-    nm = "forestry", add = "land"
+    avgForestryBII <- addDim(
+      ifelse((collapseDim(land[, , "forestry"]) * side_layers[, , c("forested", "nonforested")]) > 0,
+        dimSums(ov_bv[, , c("aff_co2p", "aff_ndc", "plant")], dim = "landcover44") /
+          (collapseDim(land[, , "forestry"]) * side_layers[, , c("forested", "nonforested")]),
+        0
+      ),
+      dimName = "land", item = "forestry"
     )
-    crop <- c("crop_ann","crop_per")
-    if(all(c("crop_tree","crop_fallow") %in% getNames(ov_bv, dim = 1))) {
-      crop <- c(crop,"crop_tree","crop_fallow")
+    crop <- c("crop_ann", "crop_per")
+    if (all(c("crop_tree", "crop_fallow") %in% getNames(ov_bv, dim = 1))) {
+      crop <- c(crop, "crop_tree", "crop_fallow")
     }
-    avgCropBII <- add_dimension(ifelse((collapseDim(land[, , c("crop")]) * side_layers[, , c("forested", "nonforested")]) > 0,
-      dimSums(ov_bv[, , crop], dim = "landcover44") /
-        (collapseDim(land[, , c("crop")]) * side_layers[, , c("forested", "nonforested")]),
-      0
-    ),
-    nm = "crop", add = "land"
+    avgCropBII <- addDim(
+      ifelse((collapseDim(land[, , c("crop")]) * side_layers[, , c("forested", "nonforested")]) > 0,
+        dimSums(ov_bv[, , crop], dim = "landcover44") /
+          (collapseDim(land[, , c("crop")]) * side_layers[, , c("forested", "nonforested")]),
+        0
+      ),
+      dimName = "land", item = "crop"
     )
     pastureBII <- ifelse(pasture * side_layers[, , c("forested", "nonforested")] > 0,
       ov_bv[, , c("manpast", "rangeland")] /
@@ -253,7 +255,7 @@ BII <- function(gdx, file = NULL, level = "glo", mode = "auto", landClass = "sum
 
   # sets
   crop_ann44 <- c("tece", "maiz", "trce", "rice_pro", "rapeseed", "sunflower", "potato", "cassav_sp", "sugr_beet", "others", "cottn_pro", "foddr", "soybean", "groundnut", "puls_pro")
-  crop_per44 <- c("oilpalm", "begr", "sugr_cane", "betr")
+  # crop_per44 are c("oilpalm", "begr", "sugr_cane", "betr")
   ac <- readGDX(gdx, "ac")
   ac_young <- paste0("ac", seq(0, 30, by = 5))
   ac_mature <- setdiff(ac, ac_young)
@@ -298,8 +300,8 @@ BII <- function(gdx, file = NULL, level = "glo", mode = "auto", landClass = "sum
 
   # conversion from area weighted biodiversity value (BV) to area weighted biodiversity intactness (BII)
   if (level == "cell") {
-    x <- cell <- ov44_bv / land_area
+    ov44_bv / land_area
   } else {
-    x <- superAggregateX(ov44_bv, level = level, aggr_type = "sum") / superAggregateX(land_area, level = level, aggr_type = "sum")
+    superAggregateX(ov44_bv, level = level, aggr_type = "sum") / superAggregateX(land_area, level = level, aggr_type = "sum")
   }
 }
