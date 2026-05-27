@@ -35,7 +35,7 @@
 #' }
 #'
 
-biochar <- function(gdx, indicator, level = "reg", feedstockAggr = FALSE, systemAggr = FALSE, attributes = "c", file = NULL) {
+biochar <- function(gdx, indicator, level = "reg", feedstockAggr = FALSE, systemAggr = FALSE, attributes = "c", file = NULL) { # nolint: cyclocomp_linter
   out <- NULL
 
   biochar <- readGDX(gdx, "ov63_biochar_prod", react = "silent")

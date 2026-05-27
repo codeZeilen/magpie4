@@ -78,12 +78,12 @@ costs <- function(gdx, file = NULL, level = "reg", type = "annuity", sum = TRUE)
   )
 
   # Trade
-  if (suppressWarnings(!is.null(readGDX(gdx, "ov_cost_trade")))) { 
-     tradeCosts <- tmpCost(gdx, "ov_cost_trade", "Trade")
+  if (suppressWarnings(!is.null(readGDX(gdx, "ov_cost_trade")))) {
+    tradeCosts <- tmpCost(gdx, "ov_cost_trade", "Trade")
   } else {
-  tradeCosts <- tmpCost(gdx, "ov_cost_trade_tariff", "Trade") +
-                       tmpCost(gdx, "ov_cost_trade_margin", "Trade") +
-                       tmpCost(gdx, "ov_cost_trade_feasibility", "Trade")
+    tradeCosts <- tmpCost(gdx, "ov_cost_trade_tariff", "Trade") +
+      tmpCost(gdx, "ov_cost_trade_margin", "Trade") +
+      tmpCost(gdx, "ov_cost_trade_feasibility", "Trade")
   }
 
   # Input factors
@@ -131,10 +131,7 @@ costs <- function(gdx, file = NULL, level = "reg", type = "annuity", sum = TRUE)
           # done this way because the conversion factor between investments and annuity is different due to depreciation
           (tmpCost(gdx, "ov38_investment_immobile", "Input Factors") +
              tmpCost(gdx, "ov38_investment_mobile", "Input Factors")) / tSm
-
       }
-
-
     }
   }
 
