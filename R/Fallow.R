@@ -5,7 +5,7 @@
 #'
 #' @param gdx   GDX file
 #' @param level aggregation level, reg, glo or regglo, cell or grid
-#' @param debug debug mode TRUE makes some consistency checks
+#' @param debugMode debug mode TRUE makes some consistency checks
 #'              between estimates for different resolutions
 #' @author Benjamin Leon Bodirsky
 
@@ -14,7 +14,7 @@
 #' x <- fallow(gdx)
 #' }
 #'
-fallow <- function(gdx, level = "reg", debug = FALSE) {
+fallow <- function(gdx, level = "reg", debugMode = FALSE) {
 
   fallow <- readGDX(gdx, "ov_fallow", react = "silent", select = list(type = "level"))
 
@@ -24,7 +24,7 @@ fallow <- function(gdx, level = "reg", debug = FALSE) {
     fallow <- setNames(land(gdx, types = "crop", level = "cell"), "crop_fallow") * 0
   }
 
-  if (debug) {
+  if (debugMode) {
 
     cropland  <- land(gdx, types = "crop", level = "cell")
     croparea <- croparea(gdx, product_aggr = TRUE, level = "cell")
@@ -39,7 +39,7 @@ fallow <- function(gdx, level = "reg", debug = FALSE) {
   out <- gdxAggregate(gdx = gdx, x = fallow, weight = "land",
                       types = "crop", to = level, absolute = TRUE)
 
-  if (debug) {
+  if (debugMode) {
 
     cropland  <- land(gdx, types = "crop", level = level)
     croparea <- croparea(gdx, product_aggr = TRUE, level = level)

@@ -27,7 +27,7 @@
 cropland <- memoise(function(gdx, level = "reg", types = NULL, sum = FALSE) {
   x <- land(gdx = gdx, level = level, types = NULL, subcategories = NULL, sum = FALSE)
 
-  cropland <- x[,,"crop"]
+  cropland <- x[, , "crop"]
   fallow_land <- fallow(gdx = gdx, level = level)
   croptree_land <- croplandTreeCover(gdx, level = level)
 
@@ -66,6 +66,4 @@ cropland <- memoise(function(gdx, level = "reg", types = NULL, sum = FALSE) {
 # the following line makes sure that a changing timestamp of the gdx file and
 # a working directory change leads to new caching, which is important if the
 # function is called with relative path args.
-,hash = function(x) hash(list(x, getwd(), lastModified(x$gdx))))
-
-
+, hash = function(x) hash(list(x, getwd(), lastModified(x$gdx))))
