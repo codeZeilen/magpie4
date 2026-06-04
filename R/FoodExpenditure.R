@@ -5,7 +5,10 @@
 #'
 #' @param gdx GDX file
 #' @param level spatial aggregation. can be "iso","reg","regglo","glo"
-#' @param after_shock FALSE is using the exogenous real income and the prices before a shock, TRUE is using the endogeenous real income that takes into account food price change on real income, "after_price_before_demand" takes into account price changes on real income, but assumes no demand adjustment
+#' @param after_shock FALSE is using the exogenous real income and the prices before a shock,
+#' TRUE is using the endogeenous real income that takes into account food price change on
+#' real income, "after_price_before_demand" takes into account price changes on real income,
+#' but assumes no demand adjustment
 #' @param products selected products or sets of products
 #' @param product_aggr if true, aggregation over products
 #' @param per_capita per capita or total population
@@ -24,8 +27,8 @@
 #'   }
 #'
 
-FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo",
-                          product_aggr = TRUE, per_capita=TRUE, valueAdded = FALSE ){ #nolint
+FoodExpenditure <- function(gdx, level = "reg", after_shock = TRUE, products = "kfo",
+                            product_aggr = TRUE, per_capita = TRUE, valueAdded = FALSE ) { #nolint
 
   if (valueAdded) {
     avExp <- suppressWarnings(readGDX(gdx, "p15_value_added_expenditures_pc"))
@@ -56,14 +59,14 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
       kcalPcIso <- readGDX(gdx, "p15_kcal_pc_iso")
 
 
-      marginFAH = markupCoef[, , "fah"][, , "a"] * markupCoef[, , "fah"][, , "b"]^log(gdp) +
+      marginFAH <- markupCoef[, , "fah"][, , "a"] * markupCoef[, , "fah"][, , "b"]^log(gdp) +
         markupCoef[, , "fah"][, , "c"] * attr[, , "wm"][, , getItems(markupCoef, dim = 3.1)]
-      marginFAH = collapseNames(marginFAH / (nutrAttr[, getYears(marginFAH), getItems(markupCoef, dim = 3.1)][, , "kcal"] * 10^6))
+      marginFAH <- collapseNames(marginFAH / (nutrAttr[, getYears(marginFAH), getItems(markupCoef, dim = 3.1)][, , "kcal"] * 10^6))
 
-      marginFAFH = (markupCoef[, , "fafh"][, , "a"] * markupCoef[, , "fafh"][, , "b"]^log(gdp) +
-                      markupCoef[, , "fafh"][, , "c"]) * attr[, , "wm"][, , getItems(markupCoef, dim = 3.1)]
-      marginFAFH = collapseNames(marginFAFH / (nutrAttr[, getYears(marginFAFH), getItems(markupCoef, dim = 3.1)][, , "kcal"] *
-                                                 10^6))
+      marginFAFH <- (markupCoef[, , "fafh"][, , "a"] * markupCoef[, , "fafh"][, , "b"]^log(gdp) +
+                       markupCoef[, , "fafh"][, , "c"]) * attr[, , "wm"][, , getItems(markupCoef, dim = 3.1)]
+      marginFAFH <- collapseNames(marginFAFH /
+                                    (nutrAttr[, getYears(marginFAFH), getItems(markupCoef, dim = 3.1)][, , "kcal"] * 10^6))
 
       fafhCoef <- read.csv(system.file("extdata", "Fafh_coef.csv", package = "magpie4"))
       colnames(fafhCoef) <- NULL
@@ -76,8 +79,8 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
       fafhShr[fafhShr < 0] <- 0
 
 
-      avExp = collapseNames(fafhShr[, getYears(kcalPcIso), ] * kcalPcIso * marginFAFH[, getYears(kcalPcIso), ] +
-                              (1 - fafhShr[, getYears(kcalPcIso), ]) * kcalPcIso * marginFAH[, getYears(kcalPcIso), ])
+      avExp <- collapseNames(fafhShr[, getYears(kcalPcIso), ] * kcalPcIso * marginFAFH[, getYears(kcalPcIso), ] +
+                               (1 - fafhShr[, getYears(kcalPcIso), ]) * kcalPcIso * marginFAH[, getYears(kcalPcIso), ])
     }
 
     avExp <- convertGDP(avExp,  unit_in = "constant 2017 US$MER",
@@ -87,7 +90,7 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
   }
 
   if (after_shock == TRUE) {
-    price = FoodDemandModuleConsumerPrices(gdx)
+    price <- FoodDemandModuleConsumerPrices(gdx)
 
     value = price *
       Kcal(
@@ -149,7 +152,7 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
       per_capita = FALSE
     )
   } else if (after_shock == FALSE) {
-    value = readGDX(gdx, "i15_prices_initial_kcal") *
+    value <- readGDX(gdx, "i15_prices_initial_kcal") *
       Kcal(
         gdx = gdx,
         level = "iso",
@@ -183,7 +186,7 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
 
   if (per_capita == TRUE) {
     pop <- population(gdx, level = level)
-    out = out / pop
+    out <- out / pop
     out[is.nan(out)] <- 0
   }
 
@@ -195,7 +198,6 @@ FoodExpenditure<-function(gdx, level = "reg", after_shock=TRUE, products = "kfo"
   } else if (!products %in% getNames(out)) {
     products <- findset(products)
   }
-
 
   out <- out[, , products] * 365  ## transform into dollar per year
 
