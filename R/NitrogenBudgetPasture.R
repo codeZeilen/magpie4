@@ -45,9 +45,9 @@ NitrogenBudgetPasture <- function(gdx, include_emissions = FALSE, level = "reg")
 
     if (level == "cell") {
       mapping <- readGDX(gdx, "cell")
-    } else if (level %in% c("grid","iso")) {
+    } else if (level %in% c("grid", "iso")) {
       clustermap_filepath <- Sys.glob(file.path(dirname(normalizePath(gdx)), "clustermap*.rds"))
-      if(length(clustermap_filepath)==1) {
+      if(length(clustermap_filepath) == 1) {
         mapping <- readRDS(clustermap_filepath)[, c("region", "cell")]
         names(mapping) <- c("i", "j")
       } else {

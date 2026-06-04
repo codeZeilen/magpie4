@@ -60,8 +60,8 @@ PriceElasticities <- function(gdx, file = NULL, level = "reg", calibrated = TRUE
 
   caloriechange <- (dimSums(kcal_after) / dimSums(kcal_before) - 1)
 
-  expenditure_change <- (dimSums(FoodDemandModuleConsumerPrices(gdx) * weight, dim = 3) / 
-    dimSums(readGDX(gdx, "i15_prices_initial_kcal") * weight, dim = 3)) - 1
+  expenditure_change <- (dimSums(FoodDemandModuleConsumerPrices(gdx) * weight, dim = 3) /
+                           dimSums(readGDX(gdx, "i15_prices_initial_kcal") * weight, dim = 3)) - 1
 
   elasticity <- caloriechange / expenditure_change
   elasticity <- round(elasticity, 5)

@@ -24,12 +24,12 @@ OtherLand <- function(gdx, level = "reg") {
   ac <- readGDX(gdx, "ac")
   ac_est <- new.magpie("GLO", getYears(x), ac, fill = 0)
   for (t in getYears(x)) {
-    ac_est[, t, getNames(ac_est[, t, ])[1:(x[, t, ]/5)]] <- 1
+    ac_est[, t, getNames(ac_est[, t, ])[1:(x[, t, ] / 5)]] <- 1
   }
   ac_sub <- 1 - ac_est
   ac_sub[, , "acx"] <- 0
 
-  restoredEst <- collapseDim(b[ , , "other.restore"])
+  restoredEst <- collapseDim(b[, , "other.restore"])
   restoredSub <- collapseDim(as.magpie(apply(b[, , "other.restore"], c(1, 3), cumsum)))
   recoveredEst <- dimSums(a * ac_est, dim = 3) - restoredEst
   recoveredSub <- dimSums(a * ac_sub, dim = 3) - restoredSub

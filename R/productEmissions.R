@@ -201,7 +201,7 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
   # COMBINE ALL GHG EMISSIONS BY PRODUCT
   # ==============================================================================
   # TODO: Add peatland emissions (N2O and CH4) - currently not allocated by product
-  # 
+  #
   out <- mbind(cByProduct, nByProduct, ch4ByProduct)
   out <- dimSums(out, dim = 3.1)  # sum over emission subcategories
 
@@ -223,29 +223,6 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
   # UNIT CONVERSION
   # ==============================================================================
 
-  if (unit == "gas") {
-    # Define conversion factors (elemental to gas form)
-    conversionFactors <- c(
-      "n2o_n" = 44 / 28,          # Mt N/yr to Mt N2O/yr
-      "n2o_n_direct" = 44 / 28,   # Mt N/yr to Mt N2O/yr
-      "n2o_n_indirect" = 44 / 28, # Mt N/yr to Mt N2O/yr
-      "ch4" = 1,                  # no conversion needed
-      "co2_c" = 44 / 12,          # Mt C/yr to Mt CO2/yr
-      "no3_n" = 62 / 14,          # Mt N/yr to Mt NO3/yr
-      "nh3_n" = 17 / 14,          # Mt N/yr to Mt NH3/yr
-      "no2_n" = 46 / 14           # Mt N/yr to Mt NO2/yr
-    )
-
-    # Apply conversions only for pollutants that exist in output
-    out <- out * conversionFactors[getNames(out, dim = "pollutants")]
-
-    # Update pollutant names (remove _c and _n suffixes)
-    getNames(out, dim = "pollutants") <- sub(pattern = "_c", replacement = "",
-                                             x = getNames(out, dim = "pollutants"))
-    getNames(out, dim = "pollutants") <- sub(pattern = "_n", replacement = "",
-                                             x = getNames(out, dim = "pollutants"))
-  }
-
   if (unit %in% c("GWP*AR5", "GWP*AR6")) {
     # Apply GWP* metric (Lynch et al. 2020 Environmental Research Letters)
     # Accounts for different persistence of CH4 vs CO2 in atmosphere
@@ -256,40 +233,49 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
       if (!tBefore %in% years) tBefore <- years[which.min(abs(years - tBefore))]
       out[, t, "ch4"] <- 4 * outTmp[, t, "ch4"] - 3.75 * outTmp[, tBefore, "ch4"]
     }
-  }
+  } else {
+    if (unit == "gas") {
+      # Define conversion factors (elemental to gas form)
+      conversionFactors <- c(
+        "n2o_n" = 44 / 28,          # Mt N/yr to Mt N2O/yr
+        "n2o_n_direct" = 44 / 28,   # Mt N/yr to Mt N2O/yr
+        "n2o_n_indirect" = 44 / 28, # Mt N/yr to Mt N2O/yr
+        "ch4" = 1,                  # no conversion needed
+        "co2_c" = 44 / 12,          # Mt C/yr to Mt CO2/yr
+        "no3_n" = 62 / 14,          # Mt N/yr to Mt NO3/yr
+        "nh3_n" = 17 / 14,          # Mt N/yr to Mt NH3/yr
+        "no2_n" = 46 / 14           # Mt N/yr to Mt NO2/yr
+      )
 
-  # GWP100 and GWP* for AR5 (IPCC Fifth Assessment Report)
-  if (unit %in% c("GWP100AR5", "GWP*AR5")) {
-    unitConversion <- out
-    unitConversion[, , ] <- 1
-    unitConversion[, , "n2o_n"] <- 44 / 28 * 265   # Mt N/yr to Mt CO2eq/yr (GWP100=265)
-    unitConversion[, , "ch4"] <- 1 * 28             # Mt CH4 to Mt CO2eq/yr (GWP100=28)
-    unitConversion[, , "co2_c"] <- 44 / 12          # Mt C/yr to Mt CO2/yr
+      # Apply conversions only for pollutants that exist in output
+      out <- out * conversionFactors[getNames(out, dim = "pollutants")]
+    } else if (unit %in% c("GWP100AR5", "GWP*AR5")) {
+      # GWP100 and GWP* for AR5 (IPCC Fifth Assessment Report)
+      unitConversion <- out
+      unitConversion[, , ] <- 1
+      unitConversion[, , "n2o_n"] <- 44 / 28 * 265    # Mt N/yr to Mt CO2eq/yr (GWP100=265)
+      unitConversion[, , "ch4"] <- 1 * 28             # Mt CH4 to Mt CO2eq/yr (GWP100=28)
+      unitConversion[, , "co2_c"] <- 44 / 12          # Mt C/yr to Mt CO2/yr
+      
+      out <- out * unitConversion[, , getItems(out, dim = "pollutants")]
 
-    out <- out * unitConversion[, , getItems(out, dim = "pollutants")]
+    } else if (unit %in% c("GWP100AR6", "GWP*AR6")) {
+      # GWP100 and GWP* for AR6 (IPCC Sixth Assessment Report)
+      unitConversion <- out
+      unitConversion[, , ] <- 1
+      unitConversion[, , "n2o_n"] <- 44 / 28 * 273    # Mt N/yr to Mt CO2eq/yr (GWP100=273)
+      unitConversion[, , "ch4"] <- 1 * 27             # Mt CH4 to Mt CO2eq/yr (GWP100=27)
+      unitConversion[, , "co2_c"] <- 44 / 12          # Mt C/yr to Mt CO2/yr
+
+      out <- out * unitConversion[, , getItems(out, dim = "pollutants")]
+
+    }
 
     # Update pollutant names
-    getNames(out, dim = "pollutants") <- sub(pattern = "_c", replacement = "", 
-                                            x = getNames(out, dim = "pollutants"))
-    getNames(out, dim = "pollutants") <- sub(pattern = "_n", replacement = "", 
-                                            x = getNames(out, dim = "pollutants"))
-  }
-
-  # GWP100 and GWP* for AR6 (IPCC Sixth Assessment Report)
-  if (unit %in% c("GWP100AR6", "GWP*AR6")) {
-    unitConversion <- out
-    unitConversion[, , ] <- 1
-    unitConversion[, , "n2o_n"] <- 44 / 28 * 273   # Mt N/yr to Mt CO2eq/yr (GWP100=273)
-    unitConversion[, , "ch4"] <- 1 * 27             # Mt CH4 to Mt CO2eq/yr (GWP100=27)
-    unitConversion[, , "co2_c"] <- 44 / 12          # Mt C/yr to Mt CO2/yr
-
-    out <- out * unitConversion[, , getItems(out, dim = "pollutants")]
-
-    # Update pollutant names
-    getNames(out, dim = "pollutants") <- sub(pattern = "_c", replacement = "", 
-                                            x = getNames(out, dim = "pollutants"))
-    getNames(out, dim = "pollutants") <- sub(pattern = "_n", replacement = "", 
-                                            x = getNames(out, dim = "pollutants"))
+    getNames(out, dim = "pollutants") <- sub(pattern = "_c", replacement = "",
+                                             x = getNames(out, dim = "pollutants"))
+    getNames(out, dim = "pollutants") <- sub(pattern = "_n", replacement = "",
+                                             x = getNames(out, dim = "pollutants"))
   }
 
   # Clean up any remaining NA values

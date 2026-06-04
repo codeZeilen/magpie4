@@ -52,56 +52,32 @@ population <- memoise(function(gdx, file = NULL, level = "reg", age = FALSE, sex
   adults    <- setdiff(readGDX(gdx, "age"), underaged)
 
   if (age == FALSE) {
-
-    pop <- dimSums(pop, dim = "age")
-
+    # Do nothing
   } else if (age == "adults") {
-
     pop <- pop[, , adults]
-    pop <- dimSums(pop, dim = "age")
-
   } else if (age == "underaged") {
-
     pop <- pop[, , underaged]
-    pop <- dimSums(pop, dim = "age")
-
   } else if (age == "working") {
-
     pop <- pop[, , working]
-    pop <- dimSums(pop, dim = "age")
-
   } else if (age == "retired") {
-
     pop <- pop[, , retired]
-    pop <- dimSums(pop, dim = "age")
-
   } else if (age != TRUE) {
-
     pop <- pop[, , age]
-    pop <- dimSums(pop, dim = "age")
-
   }
+  pop <- dimSums(pop, dim = "age")
 
   if (sex == FALSE) {
-
-    pop <- dimSums(pop, dim = "sex")
-
+    # Do nothing
   } else if (sex != TRUE) {
-
     pop <- pop[, , sex]
-    pop <- dimSums(pop, dim = "sex")
-
   }
+  pop <- dimSums(pop, dim = "sex")
 
   if (bmi_groups == TRUE) {
-
     bmiShr <- anthropometrics(gdx = gdx, indicator = "bmi_shr", level = "iso",
                               sex = sex, age = age, bmi_groups = TRUE)
-
     pop <- pop * bmiShr
-
   } else if (bmi_groups != FALSE) {
-
     bmiShr <- anthropometrics(gdx = gdx, indicator = "bmi_shr", level = "iso",
                               sex = sex, age = age, bmi_groups = TRUE)
     pop     <- pop * bmiShr
@@ -117,4 +93,4 @@ population <- memoise(function(gdx, file = NULL, level = "reg", age = FALSE, sex
 # the following line makes sure that a changing timestamp of the gdx file and
 # a working directory change leads to new caching, which is important if the
 # function is called with relative path args.
-,hash = function(x) hash(list(x, getwd(), lastModified(x$gdx))))
+, hash = function(x) hash(list(x, getwd(), lastModified(x$gdx))))

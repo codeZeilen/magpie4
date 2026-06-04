@@ -23,7 +23,7 @@
 #' x <- NitrogenBudget(gdx)
 #' }
 #'
-NitrogenBudget <- memoise(function(gdx, include_emissions = FALSE,
+NitrogenBudget <- memoise(function(gdx, include_emissions = FALSE, # nolint: cyclocomp_linter.
                                    level = "reg", debug = FALSE, cropTypes = FALSE,
                                    threshold = 0.05, progress = TRUE) {
 

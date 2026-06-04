@@ -14,7 +14,7 @@
 #'                   "value": Allocation based on economic value of outputs
 #'                   "none": No allocation - full primary input attributed to each output
 #'                             (sum of allocations > 100 percent when co-products exist)
-#' 
+#'
 #' @return MAgPIE object containing the amount of primary product needed per unit of secondary product (tDM/tDM)
 #'
 #' @author Kristine Karstens, David M Chen
@@ -30,7 +30,7 @@
 primaryPerSecondary <- function(gdx,
                                 file = NULL,
                                 level = "reg",
-                                allocation = "mass"){
+                                allocation = "mass") {
 
   # Validate allocation method
   if (!allocation %in% c("mass", "value", "none")) {
@@ -71,7 +71,7 @@ primaryPerSecondary <- function(gdx,
 
     # Value = mass * price for each product
     productValues <- procConvF * prices
-    
+
     # Normalize to get allocation weights
     allocWeights <- productValues / dimSums(productValues, dim = "ksd")
     allocWeights[is.nan(allocWeights)] <- 0
@@ -88,7 +88,7 @@ primaryPerSecondary <- function(gdx,
   # STEP 2: Calculate primary per secondary (direct processing)
   # ================================================================================
   # For each secondary product, how much of each primary product is needed?
-  # Formula: (1 / conversion_factor) * processing_share * allocation_weight
+  # > Formula: (1 / conversion_factor) * processing_share * allocation_weight
 
   # Inverse of conversion factor = primary input per unit secondary output
   primPerSecd <- procShares * allocWeights / procConvF
@@ -107,7 +107,7 @@ primaryPerSecondary <- function(gdx,
   # e.g., sugar, molasses, oils can be inputs to further processing
 
   secdPrims <- intersect(kpr, ksd)  # Secondary products that can be processed further
-  tertTest  <- dimSums(procConvF[,,paste0("kpr_", secdPrims)], dim = c("processing20", "kpr"))
+  tertTest  <- dimSums(procConvF[, , paste0("kpr_", secdPrims)], dim = c("processing20", "kpr"))
   tertSecds <- where(tertTest > 0)$true$data
 
   if (length(secdPrims) > 0) {
