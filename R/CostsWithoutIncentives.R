@@ -31,7 +31,7 @@ CostsWithoutIncentives <- function(gdx, file = NULL, level = "regglo") {
 
   ov32_land_missing <- readGDX(gdx = gdx, "ov32_land_missing", select = list(type = "level"), react = "silent")
   s32_free_land_cost <- readGDX(gdx = gdx, "s32_free_land_cost", react = "silent")
-  if (is.null(ov32_land_missing) | is.null(s32_free_land_cost)) {
+  if (is.null(ov32_land_missing) || is.null(s32_free_land_cost)) {
     cat("ov32_land_missing or s32_free_land_cost do not exist in this version of the model")
   } else {
     penalty_forestry <- gdxAggregate(gdx = gdx, x = ov32_land_missing * s32_free_land_cost, weight = NULL, to = level)
@@ -40,7 +40,7 @@ CostsWithoutIncentives <- function(gdx, file = NULL, level = "regglo") {
 
   ov32_land_missing_ndc <- readGDX(gdx = gdx, "ov32_land_missing_ndc", select = list(type = "level"), react = "silent")
   s32_free_land_cost <- readGDX(gdx = gdx, "s32_free_land_cost", react = "silent")
-  if (is.null(ov32_land_missing_ndc) | is.null(s32_free_land_cost)) {
+  if (is.null(ov32_land_missing_ndc) || is.null(s32_free_land_cost)) {
     message("ov32_land_missing_ndc or s32_free_land_cost do not exist in this version of the model")
   } else {
     penalty_ndc <- gdxAggregate(gdx = gdx, x = ov32_land_missing_ndc * s32_free_land_cost, weight = NULL, to = level)
@@ -50,7 +50,7 @@ CostsWithoutIncentives <- function(gdx, file = NULL, level = "regglo") {
   # penalty of timber targets cannot be met
   ov73_prod_heaven_timber <- readGDX(gdx = gdx, "ov73_prod_heaven_timber", select = list(type = "level"), react = "silent")
   s73_free_prod_cost <- readGDX(gdx = gdx, "s73_free_prod_cost", react = "silent")
-  if (is.null(ov73_prod_heaven_timber) | is.null(s73_free_prod_cost)) {
+  if (is.null(ov73_prod_heaven_timber) || is.null(s73_free_prod_cost)) {
     cat("ov73_prod_heaven_timber or s73_free_prod_cost do not exist in this version of the model")
   } else {
     penalty_timber <- gdxAggregate(gdx = gdx, x = ov73_prod_heaven_timber * (s73_free_prod_cost - dummy_cost[, , getNames(ov73_prod_heaven_timber)]), weight = NULL, to = level)

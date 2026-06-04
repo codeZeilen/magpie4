@@ -1,22 +1,22 @@
 #' @title embodiedBiodiversity
-#' @description Calculates production-based and consumption-based (embodied) biodiversity 
+#' @description Calculates production-based and consumption-based (embodied) biodiversity
 #' impact accounting using bilateral trade flows. Biodiversity values (BII-weighted area)
-#' are allocated to traded products based on cropland and pasture area shares, 
+#' are allocated to traded products based on cropland and pasture area shares,
 #' similar to how CO2 LUC emissions are allocated.
 #'
 #' @export
 #'
 #' @param gdx GDX file
 #' @param file a file name the output should be written to using write.magpie
-#' @param level Level of regional aggregation; "reg" (regional), "glo" (global), 
+#' @param level Level of regional aggregation; "reg" (regional), "glo" (global),
 #'   "regglo" (regional and global) or any other aggregation level defined in superAggregate.
 #'   Only used when bilateral=FALSE.
-#' @param type Type of accounting: "production" (production-based), "consumption" 
+#' @param type Type of accounting: "production" (production-based), "consumption"
 #'   (consumption-based), "trade" (export, import, and net-trade), "all" (all five),
 #'   or "flows" (bilateral flows, requires bilateral=TRUE)
-#' @param indicator Which biodiversity indicator to use: "bv" (biodiversity value, 
+#' @param indicator Which biodiversity indicator to use: "bv" (biodiversity value,
 #'   BII-weighted area in Mha), "bii_loss" (1-BII, representing biodiversity loss)
-#' @param bilateral Logical; if TRUE, returns bilateral flows with dimensions 
+#' @param bilateral Logical; if TRUE, returns bilateral flows with dimensions
 #'   (exporter.importer, year, product) instead of regional totals (default FALSE)
 #'
 #' @return Embodied biodiversity impact as MAgPIE object.
