@@ -15,24 +15,20 @@
 #'   }
 #'
 
-IntakeDetailedProtein <- function(gdx, file=NULL, level="reg", product_aggr=FALSE){
-
+IntakeDetailedProtein <- function(gdx, file = NULL, level = "reg", product_aggr = FALSE) {
   #Obtains intake calorific information at regional level, product disaggregated
-  intake_scen <- IntakeDetailed(gdx, level="reg", product_aggr=FALSE)
+  intake_scen <- IntakeDetailed(gdx, level = "reg", product_aggr = FALSE)
 
   #Extracts information on protein from food groups
-  att=readGDX(gdx=gdx,"fm_nutrition_attributes","f15_nutrition_attributes", format = "first_found")[,getYears(intake_scen),getNames(intake_scen,dim=1)]
-  intake_scen <- intake_scen / collapseNames(att[,,"kcal"]) * collapseNames(att[,,"protein"])
+  att <- readGDX(gdx = gdx, "fm_nutrition_attributes", "f15_nutrition_attributes", format = "first_found")[, getYears(intake_scen), getNames(intake_scen, dim = 1)]
+  intake_scen <- intake_scen / collapseNames(att[, , "kcal"]) * collapseNames(att[, , "protein"])
 
-  if(product_aggr){intake_scen<-dimSums(intake_scen,dim=3)}
+  if (product_aggr) {
+    intake_scen <- dimSums(intake_scen, dim = 3)
+  }
 
   #Aggregates to level as selected in the argument
-  out<-gdxAggregate(gdx = gdx,x = intake_scen,weight = 'population',to = level,absolute = FALSE)
+  out <- gdxAggregate(gdx = gdx, x = intake_scen, weight = "population", to = level, absolute = FALSE)
 
-  out(out,file)
-
+  out(out, file)
 }
-
-
-
-

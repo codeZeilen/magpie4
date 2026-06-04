@@ -19,24 +19,25 @@
 #' }
 #'
 landCarbonSink <- function(gdx, file = NULL, level = "reg", cumulative = FALSE, baseyear = 1995, source = "Grassi") {
-
-  if (source == "Grassi") {
-    a <- readGDX(gdx,"i52_land_carbon_sink",react = "silent")
-    if(!is.null(a)) {
-      t <- readGDX(gdx,"t")
-      a <- a[,t,] * 1000
+  if (source == "Grassi") { # nolint: undesirable_function_linter.
+    a <- readGDX(gdx, "i52_land_carbon_sink", react = "silent")
+    if (!is.null(a)) {
+      t <- readGDX(gdx, "t")
+      a <- a[, t, ] * 1000
       a <- superAggregateX(a, level = level, aggr_type = "sum")
     }
-  } else stop("This source is not available")
+  } else {
+    stop("This source is not available")
+  }
 
-  if (cumulative & !is.null(a)) {
-    years <- getYears(a,as.integer = T)
-    im_years <- new.magpie("GLO",years,NULL)
-    im_years[,,] <- c(1,diff(years))
-    a[,"y1995",] <- 0
-    a <- a*im_years[,getYears(a),]
-    a <- as.magpie(apply(a,c(1,3),cumsum))
-    a <- a - setYears(a[,baseyear,],NULL)
+  if (cumulative && !is.null(a)) {
+    years <- getYears(a, as.integer = TRUE)
+    im_years <- new.magpie("GLO", years, NULL)
+    im_years[, , ] <- c(1, diff(years))
+    a[, "y1995", ] <- 0
+    a <- a * im_years[, getYears(a), ]
+    a <- as.magpie(apply(a, c(1, 3), cumsum))
+    a <- a - setYears(a[, baseyear, ], NULL)
   }
 
   out(a, file)

@@ -43,9 +43,6 @@ landConservation <- function(gdx, file = NULL, level = "cell",
     a <- readGDX(gdx, "pm_land_conservation", react = "silent")
 
     if (is.null(a)) {
-      landTypes <- readGDX(gdx, "land", react = "silent", type = "Set")
-      consvTypes <- c("protect", "restore")
-      allNames <- c(outer(landTypes, consvTypes, FUN = paste, sep = "."))
       a <- new.magpie(getCells(a), getYears(a), all, fill = 0)
 
       saveNatveg <- readGDX(gdx, "p35_save_natveg", react = "silent")

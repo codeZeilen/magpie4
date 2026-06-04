@@ -29,7 +29,7 @@
 #' @importFrom madrat toolAggregate
 #' @importFrom magpiesets Cell2Country
 
-gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
+gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) { # nolint: cyclocomp_linter.
 
   if (is.function(weight)) {
     warning("You provide a function as weight.
@@ -117,8 +117,8 @@ gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
   if (from %in% c("REGGLO", "regglo")) {
     x <- x["GLO", , , invert = TRUE]
     if (!is.function(weight)) {
-      if ("GLO" %in% getRegions(weight)) {
-        if (length(getRegions(weight)) > 1) {
+      if ("GLO" %in% getItems(weight, 1.1)) {
+        if (length(getItems(weight, 1.1)) > 1) {
           weight <- weight["GLO", , , invert = TRUE]
         }
       }
@@ -129,9 +129,7 @@ gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
   # no aggregation needed?
   if (from == to) {
     out <- x
-    # cat(" no aggregation needed")
   } else {
-    # cat(paste0("mapping: ",from,"_",to))
     # select mapping
     if ((from == "cell" && to == "iso") || (from == "iso" && to == "cell") || (from == "grid" && to == "iso") || (from == "iso" && to == "grid")) {
       # mappings for the disaggregation/aggregation process
@@ -251,10 +249,10 @@ gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
       if (((from == "iso" && to == "cell") || (from == "iso" && to == "grid")) && length(getItems(x, dim = 1)) != length(unique(mapping$iso))) {
         x1     <- x
         x      <- x[unique(mapping$iso), , ]
-        #weight <- weight[unique(mapping$iso), ,]
+        # > weight <- weight[unique(mapping$iso), ,]
         if (isTRUE(absolute)) {
           warning(paste0(round(max((dimSums(x1, dim = 1) - dimSums(x, dim = 1)) / dimSums(x1, dim = 1) * 100), digits = 4),
-                        " % of the original data (x) is lost in aggregation"))
+                         " % of the original data (x) is lost in aggregation"))
         }
       }
 
@@ -277,9 +275,8 @@ gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
         weight <- weight(gdx = gdx, level = "reg", ...)
       }
       out <- mbind(out,
-                   setItems(dimSums(out * collapseNames(weight[getRegions(out), , ]), dim = 1) /
-                              dimSums(collapseNames(weight[getRegions(out), , ]), dim = 1), dim = 1, "GLO")
-      )
+                   setItems(dimSums(out * collapseNames(weight[getItems(out, 1.1), , ]), dim = 1) /
+                              dimSums(collapseNames(weight[getItems(out, 1.1), , ]), dim = 1), dim = 1, "GLO"))
     }
   } else if (to2 == "mapping") {
     # Data is already at reg aggregation level.
@@ -295,11 +292,11 @@ gdxAggregate <- function(gdx, x, weight = NULL, to, absolute = TRUE, ...) {
 
   # checks if aggregation to global level  of absolute values is the same for the input x and for the output out
   # commented out until dimSums(x,dim=1) = 0 sorted out
-  # if(absolute==TRUE){
-  #   if(any(abs(dimSums(x,dim=1)-(dimSums(out,dim=1)))/dimSums(x,dim=1)>1e-2)){
-  #     warning("Global summation of input different than output")
-  #   }
-  # }
+  # > if(absolute==TRUE){
+  # >   if(any(abs(dimSums(x,dim=1)-(dimSums(out,dim=1)))/dimSums(x,dim=1)>1e-2)){
+  # >     warning("Global summation of input different than output")
+  # >   }
+  # > }
 
   return(out)
 

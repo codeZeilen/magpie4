@@ -17,7 +17,7 @@
 #'     x <- FoodExpenditureShare(gdx)
 #'   }
 #'
-FoodExpenditureShare <- function(gdx, level = "reg", after_shock = TRUE, products = "kfo", 
+FoodExpenditureShare <- function(gdx, level = "reg", after_shock = TRUE, products = "kfo",
                                  product_aggr = TRUE, valueAdded = FALSE) {
   foodexpenditure <- FoodExpenditure(gdx, level = level, after_shock = after_shock, products = products,
                                      product_aggr = product_aggr, valueAdded = valueAdded)

@@ -20,11 +20,7 @@
 #'   }
 #'
 
-IntakeDetailed <- function(gdx,
-                           file = NULL,
-                           level = "reg",
-                           product_aggr = FALSE
-                           ) {
+IntakeDetailed <- function(gdx, file = NULL, level = "reg", product_aggr = FALSE) {
 
   intakeDetail <- readGDX(gdx, "p15_intake_detail", react = "silent")
   if (length(intakeDetail) > 0) {
