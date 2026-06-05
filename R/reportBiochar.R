@@ -19,7 +19,7 @@ reportBiochar <- function(gdx, level = "regglo") {
   ### report production values
   biocharProduction  <- biochar(gdx, indicator = "bc_production", level = level, feedstockAggr = TRUE,
                                 systemAggr = FALSE, attributes = c("ge", "dm", "c"))
-  
+
   if (is.null(biocharProduction)) {
     return(NULL)
   }

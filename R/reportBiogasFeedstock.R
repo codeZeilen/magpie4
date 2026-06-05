@@ -37,11 +37,11 @@ reportBiogasFeedstock <- function(gdx, file = NULL) {
                                   sets = c("region", "year", "kli"))
 
   # Higher Heating Value (MJ/kg DM)
-  conversionFactors[, , "livst_rum"]   <- 17.51  # Cattle (beef + dairy)
-  conversionFactors[, , "livst_pig"]   <- 13.66  # Pig
-  conversionFactors[, , "livst_chick"] <- 14.87  # Poultry (broiler + layer)
-  conversionFactors[, , "livst_egg"]   <- 14.87  # Poultry (using same as chicken)
-  conversionFactors[, , "livst_milk"]  <- 17.51  # Dairy cattle (using cattle value)
+  conversionFactors[, , "livst_rum"]   <- 17.51  # > Cattle (beef + dairy)
+  conversionFactors[, , "livst_pig"]   <- 13.66  # > Pig
+  conversionFactors[, , "livst_chick"] <- 14.87  # > Poultry (broiler + layer)
+  conversionFactors[, , "livst_egg"]   <- 14.87  # > Poultry (using same as chicken)
+  conversionFactors[, , "livst_milk"]  <- 17.51  # > Dairy cattle (using cattle value)
 
   # Nitrogen content (% of DM)
   nContent <- new.magpie(cells_and_regions = "GLO", years = NULL, names = kli,

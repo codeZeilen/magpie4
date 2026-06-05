@@ -37,7 +37,7 @@ reportCropResidues2ndBE <- function(gdx, file = NULL, collectionFraction = 0.25,
   kcr      <- gdx2::readGDX(gdx, "kcr")
   kcr2kres <- gdx2::readGDX(gdx, "kres_kcr")
   i2iso    <- gdx2::readGDX(gdx, "i_to_iso")
-  dmToGE   <- gdx2::readGDX(gdx, "fm_attributes")[, , kres][, , "ge"] # GJ/t == PJ/Mt
+  dmToGE   <- gdx2::readGDX(gdx, "fm_attributes")[, , kres][, , "ge"] # > GJ/t == PJ/Mt
 
   # Get residue biomass and usage
   usage   <- ResidueUsage(gdx, level = "reg", products = "kres", attributes = c("dm"))

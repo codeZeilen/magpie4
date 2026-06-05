@@ -32,7 +32,7 @@ LivestockDemStructure <- function(gdx,
     products <- findset("kap")
   } else if (fish == FALSE) {
     products <- findset("kli")
-  } else{
+  } else {
     stop("fish has to be binary")
   }
 

@@ -16,19 +16,17 @@
 #'
 #' @importFrom magclass as.magpie
 
-productionProfit <- function(gdx, file=NULL, level="reg"){
-
-  revenue <- productionRevenue(gdx, level="reg", products="kall", product_aggr=TRUE)
-  cost    <- costs(gdx, level="reg", sum=FALSE)
-  cost_set <- c("Input Factors","Land Conversion","Transport","TC",
-                "N Fertilizer","P Fertilizer","GHG Emissions","MACCS","AEI",
-                "Trade","Processing","Substitution processing")
-  cost    <- dimSums(cost[,,cost_set],dim=3)
+productionProfit <- function(gdx, file = NULL, level = "reg") {
+  revenue <- productionRevenue(gdx, level = "reg", products = "kall", product_aggr = TRUE)
+  cost <- costs(gdx, level = "reg", sum = FALSE)
+  cost_set <- c("Input Factors", "Land Conversion", "Transport", "TC",
+                "N Fertilizer", "P Fertilizer", "GHG Emissions", "MACCS",
+                "AEI", "Trade", "Processing", "Substitution processing")
+  cost <- dimSums(cost[, , cost_set], dim = 3)
 
   x <- revenue - cost
 
-  out <- gdxAggregate(gdx,x,to=level,weight="land",types="crop",absolute = T)
+  out <- gdxAggregate(gdx, x, to = level, weight = "land", types = "crop", absolute = TRUE)
 
-
-  out(out,file)
+  out(out, file)
 }

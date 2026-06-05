@@ -27,7 +27,7 @@
 #' }
 #'
 production <- memoise(function(gdx, file = NULL, level = "reg", products = "kall", product_aggr = FALSE, attributes = "dm",
-                       water_aggr = TRUE, cumulative = FALSE, baseyear = 1995) {
+                               water_aggr = TRUE, cumulative = FALSE, baseyear = 1995) {
 
   if (!all(products %in% readGDX(gdx, "kall"))) {
     products <- readGDX(gdx, products)

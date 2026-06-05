@@ -73,7 +73,7 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
   # ==============================================================================
 
   # Get CH4 emissions by category
-  a <- collapseNames(Emissions(gdx, level = "reg", type = "ch4", unit = "element", 
+  a <- collapseNames(Emissions(gdx, level = "reg", type = "ch4", unit = "element",
                                subcategories = TRUE), collapsedim = 2)
 
   # --- Enteric fermentation: allocate to ruminants (livst_rum) and dairy (livst_milk) ---
@@ -86,15 +86,17 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
   # Calculate enteric fermentation emissions for ruminants and dairy
   # Based on IPCC 2006 methodology with simplified emission factors
   # Emission factor: 0.03 for concentrate, 0.065 for non-concentrate
-  emisRum <- dimSums(demFeed[, , list(kap = "livst_rum")][, , list(kall = kconc)] *
-                      attr[, , "ge"][, , kconc], dim = 3.2) * 0.03 +
-            dimSums(demFeed[, , list(kap = "livst_rum")][, , list(kall = knoconc)] *
-                      attr[, , "ge"][, , knoconc], dim = 3.2) * 0.065
-                      
-  emisMilk <- dimSums(demFeed[, , list(kap = "livst_milk")][, , list(kall = kconc)] *
-                       attr[, , "ge"][, , kconc], dim = 3.2) * 0.03 +
-             dimSums(demFeed[, , list(kap = "livst_milk")][, , list(kall = knoconc)] *
-                       attr[, , "ge"][, , knoconc], dim = 3.2) * 0.065
+  emisRumkconc <- 0.03 * dimSums(demFeed[, , list(kap = "livst_rum")][, , list(kall = kconc)] *
+                                   attr[, , "ge"][, , kconc], dim = 3.2)
+  emisRumknoconc <- 0.065 * dimSums(demFeed[, , list(kap = "livst_rum")][, , list(kall = knoconc)] *
+                                      attr[, , "ge"][, , knoconc], dim = 3.2)
+  emisRum <- emisRumkconc + emisRumknoconc
+
+  emisMilkkconc <- 0.03 * dimSums(demFeed[, , list(kap = "livst_milk")][, , list(kall = kconc)] *
+                                    attr[, , "ge"][, , kconc], dim = 3.2)
+  emisMilkknoconc <- 0.065 * dimSums(demFeed[, , list(kap = "livst_milk")][, , list(kall = knoconc)] *
+                                       attr[, , "ge"][, , knoconc], dim = 3.2)
+  emisMilk <- emisMilkkconc + emisMilkknoconc
 
   # Calculate shares to split enteric fermentation between ruminants and dairy
   emisTotal <- collapseNames(emisRum + emisMilk, collapsedim = c(2, 3))
@@ -149,7 +151,7 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
   # ==============================================================================
 
   # Get N2O emissions by category (with subcategories for source allocation)
-  n2oEmis <- Emissions(gdx, level = "reg", type = "n2o_n", unit = "element", 
+  n2oEmis <- Emissions(gdx, level = "reg", type = "n2o_n", unit = "element",
                        subcategories = TRUE)
 
   # Keep only the aggregate n2o_n (not direct/indirect split) and collapse the pollutant dimension
@@ -256,7 +258,7 @@ productEmissions <- function(gdx, unit = "GWP100AR6", level = "reg", perTonne = 
       unitConversion[, , "n2o_n"] <- 44 / 28 * 265    # Mt N/yr to Mt CO2eq/yr (GWP100=265)
       unitConversion[, , "ch4"] <- 1 * 28             # Mt CH4 to Mt CO2eq/yr (GWP100=28)
       unitConversion[, , "co2_c"] <- 44 / 12          # Mt C/yr to Mt CO2/yr
-      
+
       out <- out * unitConversion[, , getItems(out, dim = "pollutants")]
 
     } else if (unit %in% c("GWP100AR6", "GWP*AR6")) {
